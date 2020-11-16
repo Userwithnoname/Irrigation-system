@@ -11,7 +11,7 @@ const int Y_pin = A1;
 const int dry = 614;
 const int wet = 230;
 
-//PROGRAM
+//PROGRAM VARIABLES
 int humidity_limit = 60;
 int humidity = 0;
 int screen_num = 0;
