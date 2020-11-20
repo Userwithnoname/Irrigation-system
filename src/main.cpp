@@ -10,14 +10,17 @@ const int X_pin = A0;
 const int Y_pin = A1;
 const int dry = 614;
 const int wet = 230;
+const int solenoid = 5;
 
 //PROGRAM VARIABLES
-int humidity_limit = 60;
+int humidity_limit = 10;
 int humidity = 0;
 int screen_num = 0;
 int water_amount = 0;
 int lcd_off = 0;
 int sensorVal = 0;
+bool humactive = false;
+
 
 //------------------------------------------------------------
 
@@ -32,6 +35,11 @@ void setup()
   pinMode(Y_pin, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
+
+// SOLENOID
+  pinMode(solenoid, OUTPUT);
+  digitalWrite(solenoid, HIGH);
+
   
 // LCD
 
@@ -39,6 +47,12 @@ void setup()
   lcd.clear();
   lcd.backlight();
 }
+
+ void pour() {
+ while(humactive == true && humidity_limit > humidity){
+    digitalWrite(solenoid, LOW);
+  }
+ }
 
 //------------------------------------------------------------
 
@@ -49,12 +63,16 @@ void loop()
 
 int sensorVal = analogRead(A3);
 int humidity = map(sensorVal, wet, dry, 100, 0);
-/*
+
 Serial.println("REAL HUM");
 Serial.println(humidity);
 Serial.println("HUM LIMIT");
 Serial.println(humidity_limit);
-*/
+Serial.println("SOLENOID STATE");
+Serial.println(digitalRead(5));
+Serial.println("HUMACTIVE");
+Serial.println(humactive);
+delay(1000);
 
 // ---> INITIAL SCREEN
 
@@ -98,10 +116,16 @@ Serial.println(humidity_limit);
     lcd.print(humidity_limit);
     delay(200);}
 
-  if(humidity_limit > humidity){
-    digitalWrite(LED_BUILTIN, HIGH);}
-  else
-    {digitalWrite(LED_BUILTIN, LOW);}    
+  if(screen_num == 1 && digitalRead(SW_pin) == LOW){
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Humidity mode");
+    lcd.setCursor(0,1);
+    lcd.print("  activated");
+    delay(200);
+    humactive = true;
+    pour();
+  }
 
 // ---> WATER
 
@@ -168,5 +192,4 @@ Serial.println(humidity_limit);
   if(screen_num == -1){
     screen_num = 1;
     delay(200);}
-
 }
