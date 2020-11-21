@@ -1,3 +1,10 @@
+/*
+po vypnuti rele sa resetne doska, treba odstranit a fixnut pour funkciu
+*/
+
+
+
+
 #include <Arduino.h>
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
@@ -9,11 +16,11 @@ const int SW_pin = 2;
 const int X_pin = A0;
 const int Y_pin = A1;
 const int dry = 614;
-const int wet = 230;
+const int wet = 225;
 const int solenoid = 5;
 
 //PROGRAM VARIABLES
-int humidity_limit = 10;
+int humidity_limit = 5;
 int humidity = 0;
 int screen_num = 0;
 int water_amount = 0;
@@ -49,10 +56,11 @@ void setup()
 }
 
  void pour() {
- while(humactive == true && humidity_limit > humidity){
-    digitalWrite(solenoid, LOW);
+    if(humactive == true && humidity_limit > humidity){
+    digitalWrite(solenoid, LOW);}
+    delay(200);
   }
- }
+ 
 
 //------------------------------------------------------------
 
@@ -72,6 +80,8 @@ Serial.println("SOLENOID STATE");
 Serial.println(digitalRead(5));
 Serial.println("HUMACTIVE");
 Serial.println(humactive);
+Serial.println("sensorval");
+Serial.println(sensorVal);
 delay(1000);
 
 // ---> INITIAL SCREEN
@@ -124,7 +134,12 @@ delay(1000);
     lcd.print("  activated");
     delay(200);
     humactive = true;
-    pour();
+  }
+
+  pour();
+
+  if(sensorVal < 550){
+    digitalWrite(solenoid, HIGH);
   }
 
 // ---> WATER
