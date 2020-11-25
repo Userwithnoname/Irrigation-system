@@ -1,5 +1,5 @@
 /*
-po vypnuti rele sa resetne doska, treba odstranit a fixnut pour funkciu
+dorobit force vodu
 */
 
 
@@ -54,12 +54,6 @@ void setup()
   lcd.clear();
   lcd.backlight();
 }
-
- void pour() {
-    if(humactive == true && humidity_limit > humidity){
-    digitalWrite(solenoid, LOW);}
-    delay(200);
-  }
  
 
 //------------------------------------------------------------
@@ -136,12 +130,14 @@ delay(1000);
     humactive = true;
   }
 
-  pour();
-
-  if(sensorVal < 550){
-    digitalWrite(solenoid, HIGH);
-  }
-
+ if(humactive == true && humidity_limit > humidity){
+      digitalWrite(solenoid, LOW);
+      delay(200);}
+ else
+ {
+   digitalWrite(solenoid, HIGH);
+ }
+ 
 // ---> WATER
 
   if(screen_num == 2){
